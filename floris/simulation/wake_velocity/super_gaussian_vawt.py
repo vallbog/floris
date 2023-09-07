@@ -57,6 +57,7 @@ class SuperGaussianVAWTVelocityDeficit(BaseModel):
     bz: float = field(default=0.70)
     cy: float = field(default=2.4)
     cz: float = field(default=2.4)
+    two_dimensional: bool = field(default=False)
 
     def prepare_function(
         self,
@@ -121,11 +122,17 @@ class SuperGaussianVAWTVelocityDeficit(BaseModel):
 
         # Characteristic nondimensional wake widths grow linearly in the streamwise direction
         sigma_y_tilde = ne.evaluate("ky_star * x_tilde + epsilon")
-        sigma_z_tilde = ne.evaluate("kz_star * x_tilde_H + epsilon")
+        if self.two_dimensional:
+            sigma_z_tilde = epsilon
+        else:
+            sigma_z_tilde = ne.evaluate("kz_star * x_tilde_H + epsilon")
 
         # Exponents which determine the wake shape
         ny = ne.evaluate("ay * exp(-by * x_tilde) + cy")
-        nz = ne.evaluate("az * exp(-bz * x_tilde_H) + cz")
+        if self.two_dimensional:
+            nz = az + cz
+        else:
+            nz = ne.evaluate("az * exp(-bz * x_tilde_H) + cz")
 
         # At any streamwise location x behind the turbine, the velocity deficit in the
         # yz-plane is given by multiplying the maximum deficit C = C(x) with two super-Gaussian
