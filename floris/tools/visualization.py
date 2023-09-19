@@ -724,6 +724,7 @@ class VelocityProfilesFigure():
     layout: list[str] = field(default=['y'])
     ax_width: float = field(default=2.07)
     ax_height: float = field(default=3.0)
+    xlabel: str = field(default=r'$\Delta U / U_\infty$')
 
     n_rows: int = field(init=False)
     n_cols: int = field(init=False)
@@ -745,7 +746,7 @@ class VelocityProfilesFigure():
         )
 
         for ax in self.axs[-1]:
-            ax.set_xlabel(r'$\Delta U / U_\infty$', fontsize=14)
+            ax.set_xlabel(self.xlabel, fontsize=14)
             ax.tick_params('x', labelsize=14)
 
         for ax, x_D in zip(self.axs[0], self.downstream_dists_D):
@@ -773,7 +774,9 @@ class VelocityProfilesFigure():
         for df in velocity_deficit_profiles:
             ax, profile_direction = self.match_profile_to_axes(df)
             profile_direction_D = f'{profile_direction}/D'
-            ax.plot(df['velocity_deficit'], df[profile_direction_D], **kwargs)
+            # Access column index 3 instead of df['velocity_deficit'] to quickly add
+            # possibility to plot profiles of any variable
+            ax.plot(df.iloc[:,[3]], df[profile_direction_D], **kwargs)
 
     def match_profile_to_axes(
         self,
