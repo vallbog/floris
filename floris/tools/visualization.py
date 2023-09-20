@@ -827,6 +827,7 @@ class VelocityProfilesFigure():
     def add_ref_lines_y(
         self,
         ref_lines_y_D: list[float] | NDArrayFloat,
+        xlim: list[float] | NDArrayFloat = None,
         **kwargs
     ) -> None:
         """
@@ -843,11 +844,12 @@ class VelocityProfilesFigure():
                 "such profiles exist in the figure."
             )
         row_y = self.layout.index('y')
-        self.add_ref_lines(ref_lines_y_D, row_y, **kwargs)
+        self.add_ref_lines(ref_lines_y_D, row_y, xlim, **kwargs)
 
     def add_ref_lines_z(
         self,
         ref_lines_z_D: list[float] | NDArrayFloat,
+        xlim: list[float] | NDArrayFloat = None,
         **kwargs
     ) -> None:
         """
@@ -864,14 +866,17 @@ class VelocityProfilesFigure():
                 "such profiles exist in the figure."
             )
         row_z = self.layout.index('z')
-        self.add_ref_lines(ref_lines_z_D, row_z, **kwargs)
+        self.add_ref_lines(ref_lines_z_D, row_z, xlim, **kwargs)
 
     def add_ref_lines(
         self,
         ref_lines_D: list[float] | NDArrayFloat,
         row: int,
+        xlim: list[float] | NDArrayFloat = None,
         **kwargs
     ) -> None:
+        if xlim is None:
+            xlim = [0.0, 1.0]
         default_params = {
                 'linestyle': (0, (4, 2)),
                 'color': 'k',
@@ -883,4 +888,4 @@ class VelocityProfilesFigure():
 
         for ax in self.axs[row]:
             for coordinate in ref_lines_D:
-                ax.plot([0.0, 1.0], [coordinate, coordinate], **kwargs)
+                ax.plot(xlim, [coordinate, coordinate], **kwargs)
