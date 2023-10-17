@@ -184,7 +184,7 @@ class TurbineGrid(Grid):
     unsorted_indices: NDArrayInt = field(init=False)
     x_center_of_rotation: NDArrayFloat = field(init=False)
     y_center_of_rotation: NDArrayFloat = field(init=False)
-    average_method = "cubic-mean"
+    average_method = "simple-mean"
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
