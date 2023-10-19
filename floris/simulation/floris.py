@@ -330,7 +330,16 @@ class Floris(BaseClass):
         elif vel_model == "empirical_gauss":
             full_flow_empirical_gauss_solver(self.farm, self.flow_field, field_grid, self.wake)
         elif vel_model == "super_gaussian_vawt":
-            full_flow_vawt_solver(self.farm, self.flow_field, field_grid, self.wake)
+            # Assume that the user always inputs solver type `turbine_grid`
+            # and `turbine_grid_points`, such that the latter can be used
+            # in the vawt_solver which runs as a part of full_flow_vawt_solver
+            full_flow_vawt_solver(
+                self.farm,
+                self.flow_field,
+                field_grid,
+                self.wake,
+                turbine_grid_resolution=self.grid.grid_resolution,
+            )
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
 

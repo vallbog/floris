@@ -18,6 +18,7 @@ from attrs import define, field
 from floris.simulation import BaseClass, BaseModel
 from floris.simulation.wake_combination import (
     FLS,
+    LLS,
     MAX,
     SOSFS,
 )
@@ -47,7 +48,8 @@ MODEL_MAP = {
     "combination_model": {
         "fls": FLS,
         "max": MAX,
-        "sosfs": SOSFS
+        "sosfs": SOSFS,
+        "lls": LLS,
     },
     "deflection_model": {
         "jimenez": JimenezVelocityDeflection,

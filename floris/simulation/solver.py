@@ -1599,9 +1599,13 @@ def vawt_solver(
             **deficit_model_args
         )
 
+        # Should I have the whole flow_field.u_initial_sorted? I'll know
+        # u_inflow sequentially
         wake_field = model_manager.combination_model.function(
             wake_field,
-            velocity_deficit * flow_field.u_initial_sorted
+            velocity_deficit * flow_field.u_initial_sorted,
+            flow_field.u_initial_sorted,
+#           u_inflow_sorted,
         )
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
@@ -1617,7 +1621,8 @@ def full_flow_vawt_solver(
     farm: Farm,
     flow_field: FlowField,
     flow_field_grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
-    model_manager: WakeModelManager
+    model_manager: WakeModelManager,
+    turbine_grid_resolution: list | float = 3,
 ) -> None:
 
     # Get the flow quantities and turbine performance
@@ -1646,7 +1651,7 @@ def full_flow_vawt_solver(
         reference_turbine_diameter=turbine_grid_farm.rotor_diameters,
         wind_directions=turbine_grid_flow_field.wind_directions,
         wind_speeds=turbine_grid_flow_field.wind_speeds,
-        grid_resolution=3,
+        grid_resolution=turbine_grid_resolution,
         time_series=turbine_grid_flow_field.time_series,
         is_vertical_axis_turbine=turbine_grid_farm.is_vertical_axis_turbine,
         vawt_blade_lengths=turbine_grid_farm.vawt_blade_lengths,
@@ -1659,6 +1664,12 @@ def full_flow_vawt_solver(
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
     turbine_grid_farm.initialize(turbine_grid.sorted_indices)
     vawt_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
+    print(turbine_grid_flow_field.u_sorted)
+    u_inflow_sorted = average_velocity(
+        turbine_grid_flow_field.u_sorted,
+        method=turbine_grid.average_method,
+    )
+    print(u_inflow_sorted)
 
     ### Referring to the quantities from above, calculate the wake in the full grid
 
@@ -1726,7 +1737,9 @@ def full_flow_vawt_solver(
 
         wake_field = model_manager.combination_model.function(
             wake_field,
-            velocity_deficit * flow_field.u_initial_sorted
+            velocity_deficit * flow_field.u_initial_sorted,
+            flow_field.u_initial_sorted,
+            u_inflow_sorted,
         )
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
