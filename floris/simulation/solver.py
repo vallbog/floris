@@ -1550,6 +1550,8 @@ def vawt_solver(
         y_i = y_i[:, :, :, None, None]
         z_i = np.mean(grid.z_sorted[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
+        u_inflow_i = average_velocity(flow_field.u_sorted[:, :, i:i+1], method=grid.average_method)
+        u_inflow_i = u_inflow_i[:, :, :, None, None]
 
         ct_i = Ct(
             velocities=flow_field.u_sorted,
@@ -1599,13 +1601,11 @@ def vawt_solver(
             **deficit_model_args
         )
 
-        # Should I have the whole flow_field.u_initial_sorted? I'll know
-        # u_inflow sequentially
         wake_field = model_manager.combination_model.function(
             wake_field,
             velocity_deficit * flow_field.u_initial_sorted,
             flow_field.u_initial_sorted,
-#           u_inflow_sorted,
+            u_inflow_i,
         )
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field

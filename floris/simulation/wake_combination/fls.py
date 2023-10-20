@@ -26,7 +26,14 @@ class FLS(BaseModel):
     def prepare_function(self) -> dict:
         pass
 
-    def function(self, wake_field: np.ndarray, velocity_field: np.ndarray):
+    def function(
+        self,
+        wake_field: np.ndarray,
+        velocity_deficit_dim: np.ndarray,
+        u_initial: np.ndarray = None,
+        u_inflow_i: np.ndarray = None,
+    ):
+
         """
         Combines the base flow field with the velocity deficits
         using freestream linear superpostion. In other words, the wake
@@ -40,4 +47,4 @@ class FLS(BaseModel):
             np.array: The resulting flow field after applying the wake to the
                 base.
         """
-        return wake_field + velocity_field
+        return wake_field + velocity_deficit_dim

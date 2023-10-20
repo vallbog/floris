@@ -30,8 +30,8 @@ class LLS(BaseModel):
         self,
         wake_field: np.ndarray,
         velocity_deficit_dim: np.ndarray,
-        u_initial: np.ndarray,
-        u_inflow: np.ndarray,
+        u_initial: np.ndarray = None,
+        u_inflow_i: np.ndarray = None,
     ):
-        velocity_deficit_dim_local = u_inflow - u_initial + velocity_deficit_dim
+        velocity_deficit_dim_local = u_inflow_i - u_initial + velocity_deficit_dim
         return wake_field + velocity_deficit_dim_local
